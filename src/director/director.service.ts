@@ -10,6 +10,7 @@ import { Director } from './director.entity';
 import regexp from '../regexp';
 import { JwtService } from '@nestjs/jwt';
 import { stringToHash } from 'src/hashCode';
+import { join } from 'path/posix';
 
 @Injectable()
 export class DirectorService {
@@ -33,6 +34,7 @@ export class DirectorService {
           directorTel,
           directorReceptionTime,
           directorType,
+          directorImage,
         } = foundDirector[i];
 
         arr.push({
@@ -42,9 +44,18 @@ export class DirectorService {
           directorTel,
           directorReceptionTime,
           directorType,
+          directorImage,
         });
       }
       return arr;
+    } catch (_) {
+      return new InternalServerErrorException();
+    }
+  }
+
+  getProfilePhoto(image: string, res: any) {
+    try {
+      return res.sendFile(join(process.cwd(), 'upload/' + image));
     } catch (_) {
       return new InternalServerErrorException();
     }
@@ -92,7 +103,7 @@ export class DirectorService {
     }
   }
 
-  async createDirector(director: Director) {
+  async createDirector(director: Director, file: any) {
     try {
       if (
         !director.directorEmail ||
@@ -126,7 +137,9 @@ export class DirectorService {
       });
 
       if (!foundDirector) {
+        const fileName = file.length ? file[0].filename : undefined;
         const newDirector = this.directorReposity.create(director);
+        if (fileName) newDirector.directorImage = fileName;
         await this.directorReposity.save(newDirector);
         return { message: 'Created' };
       } else {

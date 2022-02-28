@@ -5,6 +5,8 @@ import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 export class Director {
   @PrimaryGeneratedColumn('uuid', { name: 'director_id' })
   directorId: string;
+  @Column({ name: 'director_image', default: 'avatar.jpg' })
+  directorImage: string;
   @Column({ name: 'director_fullname', nullable: false })
   directonFullname: string;
   @Column({ name: 'director_tel', nullable: false })

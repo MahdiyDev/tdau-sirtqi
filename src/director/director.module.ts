@@ -11,10 +11,16 @@ import { Director } from './director.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { AuthMiddleware } from './auth.middleware';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Director]),
+    MulterModule.registerAsync({
+      useFactory: () => ({
+        dest: './upload/',
+      }),
+    }),
     JwtModule.register({
       secret: jwtConstants.secret,
     }),
